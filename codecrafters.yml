@@ -2,7 +2,8 @@
 #
 # These can be VERY verbose, so we suggest turning them off
 # unless you really need them.
-debug: false
+debug: true
+# Set this to true if you want to run the tests in a Docker container.
 
 # Use this to change the C version used to run your code
 # on Codecrafters.
