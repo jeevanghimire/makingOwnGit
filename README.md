@@ -1,5 +1,3 @@
-[![progress-banner](https://backend.codecrafters.io/progress/git/98ffa831-2dfa-4da8-a41c-e8b973c521a3)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
-
 # Git Implementation
 In this challenge, I am going to build a small Git implementation that's capable of
 initializing a repository, creating commits and cloning a public repository.
@@ -23,10 +21,13 @@ That's all!
 Note: This section is for stages 2 and beyond.
 
 1. Ensure you have `gcc` installed locally
-1. Run `./your_program.sh` to run your Git implementation, which is implemented
-   in `src/main.c`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+2. Ensure you have `make` installed locally
+3. Ensure you have `git` installed locally
+4. Ensure you have `curl` installed locally
+5. Test your program by running the following command:
+
+```sh
+make test
 
 # Testing locally
 
@@ -47,7 +48,6 @@ To make this easier to type out, you could add a
 [shell alias](https://shapeshed.com/unix-alias/):
 
 ```sh
-alias mygit=/path/to/your/repo/your_program.sh
 
 mkdir -p /tmp/testing && cd /tmp/testing
 mygit init
