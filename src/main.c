@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     }
     else if (strcmp(command, "cat-file") == 0)
     {
-        if (argc != 4 || strcmp(argv[2], '-p') == 0)
+        if (argc != 4 || strcmp(argv[2], "-p") == 0)
         {
             fprintf(stderr, "Usage: ./your_program.sh cat-file -p <object>\n");
             return 1;
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
         const char *objectHash = argv[3];
         char objectPath[256];
         snprintf(objectPath, sizeof(objectPath), ".git/objects/%c%c/%s",
-                 objectHash[0], objectHash[1], objectHash + 2);
+                objectHash[0], objectHash[1], objectHash + 2);
         FILE *objectFile = fopen(objectPath, "rb");
         if (objectFile == NULL)
         {
