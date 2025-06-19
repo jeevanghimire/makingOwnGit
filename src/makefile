@@ -10,10 +10,10 @@ CFLAGS = -Wall -Wextra -std=c2x
 LDFLAGS = -lz
 
 # Default target
-all: run
+all: build
 
 # Build target
-$(OUT): $(SRC)
+build: $(SRC) 
 	$(CC) $(CFLAGS) -o $(OUT) $(SRC) $(LDFLAGS)
 
 # Run with custom args: make run ARGS="init"
