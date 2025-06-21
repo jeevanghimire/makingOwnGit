@@ -98,6 +98,16 @@ int main()
         return hash_object(argv[2], 1);
     }
 
+    else if(strcmp(command, "ls-tree" == 0)){
+        if(argc != 3)
+        {
+            fprintf(stderr, "Usage: ls-tree <tree_hash>\n");
+            return 1;
+        }
+        char *tree_hash = argv[1];
+        ls_tree(tree_hash, 0);
+    }
+
     else
     {
         fprintf(stderr, "Unknown command: %s\n", command);
