@@ -35,9 +35,9 @@ typedef struct
 /* Function prototypes */
 void get_file_path(char *file_path, char *object_hash);
 int decompress_blob(FILE *file, unsigned char **blob_data, size_t *blob_size);
-int cat_file(char *fp, char *path);
 int hash_object(char *filename, int write_flag);
 void die(const char *msg);
+int cat_file(char *path);
 void read_git_object(const char *hash, unsigned char **data, size_t *size);
 void parse_tree(const unsigned char *data, size_t size, int name_only);
 void ls_tree(const char *tree_file, int name_only);

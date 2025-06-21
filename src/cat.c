@@ -1,11 +1,7 @@
 #include "blob.h"
-
-
-
-
-int cat_file(const char *hash, char *path)
+int cat_file(char *path)
 {
-    const char *object_hash = hash;
+    const char *object_hash = path;
     char object_path[256];
     sprintf(object_path, ".git/objects/%c%c/%s", object_hash[0], object_hash[1],
             object_hash + 2);
@@ -29,7 +25,7 @@ int cat_file(const char *hash, char *path)
         return 1;
     }
     fclose(objectFile);
-
+    // Read the compressed data from the object file
     unsigned char decompressed[65536];
     z_stream stream = {
         .next_in = compressed_data,

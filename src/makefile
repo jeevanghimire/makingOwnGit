@@ -2,7 +2,7 @@
 CC = gcc
 
 # Source and output
-SRC = main.c
+SRC = main.c cat.c blob.c
 OUT = mygit
 
 # Flags
@@ -14,7 +14,7 @@ all: build
 
 # Build target
 build: $(SRC) 
-	$(CC) $(CFLAGS) -o $(OUT) $(SRC) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(SRC) -o $(OUT) $(LDFLAGS)
 
 # Run with custom args: make run ARGS="init"
 run: $(OUT)

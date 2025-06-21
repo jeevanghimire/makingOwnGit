@@ -71,7 +71,21 @@ int main()
             fprintf(stderr, "Usage: cat-file -p <hash>\n");
             return 1;
         }
-        return cat_file(argv[2],); // Assuming the second argument is a file stream like stdout
+        // Assuming the second argument is a file stream like stdout
+        char *path = malloc(sizeof(char) * (SHA_LEN + 2 + strlen(OBJ_DIR)));
+        FILE *blob_file = NULL;
+
+        get_file_path(path, argv[3]);
+        blob_file = fopen(path, "rb");
+        if (blob_file == NULL)
+        {
+            fprintf(stderr, "Failed to open file %s: %s\n", path, strerror(errno));
+            return 1;
+        }
+        cat_file(path);
+
+        free(path);
+        fclose(blob_file);
     }
     else if (strcmp(command, "hash-object") == 0)
     {
@@ -82,6 +96,7 @@ int main()
         }
         return hash_object(argv[2], 1);
     }
+
     else
     {
         fprintf(stderr, "Unknown command: %s\n", command);

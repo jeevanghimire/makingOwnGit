@@ -1,6 +1,10 @@
 #include "blob.h"
-#include <zlib.h>
 
+
+void get_file_path(char *file_path, char *object_hash) {
+    // Assuming you store git-like objects as .git/objects/ab/cd... (just an example)
+    snprintf(file_path, 100, ".mygit/objects/%.2s/%.38s", object_hash, object_hash + 2);
+}
 
 int hash_object(char *filename, int write_flag)
 {
@@ -95,4 +99,6 @@ int hash_object(char *filename, int write_flag)
         fwrite(compressed_blob, 1, stream.total_out, object_file);
         fclose(object_file);
     }
+    free(blob);
+    return 0;
 }
