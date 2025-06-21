@@ -73,9 +73,10 @@ int main()
         }
         // Assuming the second argument is a file stream like stdout
         char *path = malloc(sizeof(char) * (SHA_LEN + 2 + strlen(OBJ_DIR)));
+        get_file_path(path, argv[2]);
         FILE *blob_file = NULL;
 
-        get_file_path(path, argv[3]);
+        get_file_path(path, argv[2]);
         blob_file = fopen(path, "rb");
         if (blob_file == NULL)
         {
@@ -89,7 +90,7 @@ int main()
     }
     else if (strcmp(command, "hash-object") == 0)
     {
-        if (argc < 4 || (strcmp(argv[2], "-w") != 0))
+        if (argc != 3 || (strcmp(argv[1], "-w") != 0))
         {
             fprintf(stderr, "Usage: hash-object -w <file>\n");
             return 1;

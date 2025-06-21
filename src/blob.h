@@ -13,12 +13,12 @@
 #include <curl/curl.h>
 #include <ctype.h>
 #include <zlib.h>
-#define SHA_LEN 100
+#define SHA_LEN 20
 #define CHUNK 16384
 #define BUFFER_SIZE 4096
 #define OBJ_DIR ".git/objects"
-#define COMMITTER_NAME "Dorine Tipo"
-#define COMMITTER_EMAIL "dorine.a.tipo@gmail.com"
+#define COMMITTER_NAME "Jeevan Ghimire"
+#define COMMITTER_EMAIL "jeevanghimire@jeevanghimire.name.np"
 
 typedef struct
 {
