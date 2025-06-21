@@ -4,8 +4,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <zlib.h>
-    
-
+#include <CommonCrypto/CommonDigest.h>
 
 #define MAX_INPUT 1024
 #define CHUNK_SIZE 4096
@@ -71,39 +70,6 @@ int cat_file(const char *hash)
     content++;
     fwrite(content, 1, strlen((char *)content), stdout);
     return 0;
-}
-
-int hash_object(char *filename)
-{
-    FILE *f = fopen(filename, "rb");
-    if (!f)
-    {
-        fprintf(stderr, "Failed to open file: %s\n", strerror(errno));
-        return 1;
-    }
-    // Read file content
-
-    fseek(f, 0, SEEK_END);
-    long size = ftell(f);
-    fseek(f, 0, SEEK_SET);
-    unsigned char *data = malloc(size);
-    if (!data)
-    {
-        fprintf(stderr, "Memory allocation failed\n");
-        fclose(f);
-        return 1;
-    }
-    fread(data, 1, size, f);
-    unsigned char hash[20];
-        for (int i = 0; i < 20; i++) {
-            hash[i] = i;
-        }
-        for (int i = 0; i < 20; i++) {
-            printf("%02x", hash[i]);
-        }
-        printf("\n");
-    fclose(f);
-return 0;
 }
 
 int main()
@@ -182,18 +148,19 @@ int main()
     }
     else if (strcmp(command, "hash-object") == 0)
     {
-        if (argc != 2)
+        if (argc < 4 || (strcmp(argv[2], "-w") != 0))
         {
-            fprintf(stderr, "Usage: hash-object <file>\n");
+            fprintf(stderr, "Usage: hash-object -w <file>\n");
             return 1;
         }
-        const char *file_path = argv[1];
+        const char *file_path = argv[3];
         FILE *file = fopen(file_path, "rb");
         if (!file)
         {
             fprintf(stderr, "Failed to open file: %s\n", strerror(errno));
             return 1;
         }
+        // Read the file content
         fseek(file, 0, SEEK_END);
         long size = ftell(file);
         fseek(file, 0, SEEK_SET);
@@ -207,8 +174,71 @@ int main()
         }
         fclose(file);
 
-
         // implement the hash here using SHA-1
+
+        unsigned char hash[CC_SHA1_DIGEST_LENGTH];
+        CC_SHA1(data, (CC_LONG)size, hash);
+        free(data);
+        char hash_str[41];
+        for (int i = 0; i < CC_SHA1_DIGEST_LENGTH; i++)
+        {
+            sprintf(hash_str + (i * 2), "%02x", hash[i]);
+        }
+        hash_str[40] = '\0';
+        printf("%s\n", hash_str);
+        char object_path[256];
+        sprintf(object_path, ".git/objects/%c%c/%s", hash_str[0], hash_str[1],
+                hash_str + 2);
+        FILE *objectFile = fopen(object_path, "wb");
+        if (!objectFile)
+        {
+            fprintf(stderr, "Failed to create object file: %s\n", strerror(errno));
+            return 1;
+        }
+        // Write the object header
+        // implementing -w like hash-object -w <file>
+        fprintf(objectFile, "blob %ld", size);
+        fwrite(data, 1, size, objectFile);
+        fclose(objectFile);
+        printf("Object stored with hash: %s\n", hash_str);
+        // Create the directory if it doesn't exist
+
+        if (strcmp(argv[2], "-w") == 0)
+        {
+            // compress the blob data
+            unsigned char compressed_block[CHUNK_SIZE];
+            z_stream stream = {0};
+            deflateInit(&stream, Z_BEST_COMPRESSION);
+            stream.avail_in = size;
+            stream.next_in = data;
+            stream.avail_out = sizeof(compressed_block);
+            stream.next_out = compressed_block;
+
+            int status = deflate(&stream, Z_FINISH);
+            if (status != Z_STREAM_END)
+            {
+                fprintf(stderr, "Compression failed: %s\n", zError(status));
+                deflateEnd(&stream);
+                return 1;
+            }
+            deflateEnd(&stream);
+            // Write the compressed data to the object file
+            //.git/objects/<first two characters of hash>/<remaining characters of hash>
+            char object_dir[256];
+            sprintf(object_dir, ".git/objects/%.2s", hash_str);
+            mkdir(object_dir, 0755);
+            char object_file_path[256];
+            sprintf(object_file_path, "%s/%s", object_dir, hash_str + 2);
+            FILE *object_file = fopen(object_file_path, "wb");
+            if (!object_file)
+            {
+                fprintf(stderr, "Failed to create object file: %s\n", strerror(errno));
+                return -1;
+            }
+            fwrite(compressed_block, 1, stream.total_out, object_file);
+            fclose(object_file);
+            printf("Compressed object stored with hash: %s\n", hash_str);
+        }
     }
     else
     {
